@@ -1,5 +1,5 @@
 # Chess-Multiplayer-Prototype
-Unity Multiplayer chess prototype
+The goal of this project is to create a Unity Multiplayer chess program.
 
 This is a from scratch chess program that will support hotseat and eventually
 networked multiplayer using an implementation of Photon Unity Networking.
