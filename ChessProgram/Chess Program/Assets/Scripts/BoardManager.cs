@@ -2,33 +2,61 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardManager : MonoBehaviour {
-
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-}
-
-
-//this object comprises of the entire board itself
-public class Board
+//this object is represents the entire board
+public class BoardManager : MonoBehaviour
 {
-    public BoardGrid boardTiles = new BoardGrid();
+    BoardGrid board;
+
+
+    public BoardManager()
+    {
+        board = new BoardGrid();
+    }
+
+    public BoardManager(BoardGrid boardToBeLoaded)
+    {
+        board = boardToBeLoaded;
+    }
+
+    public void LayOutBoardForPlay(BoardGrid bord)
+    {
+        for (int x = 0; x < board.spot.GetLength(0); x++)
+        {
+            for (int y = 0; y < board.spot.GetLength(1); y++)
+            {
+
+            }
+        }
+    }
+
+    public void ClearBoardofPieces()
+    {
+
+    }
+
+    public void PlacePiece()
+    {
+
+    }
+
+    public void RemovePiece()
+    {
+
+    }
+
 }
 
 
 
-//Object Container for the entire board
+//Object Container for the entire board and it's layout
+//serialized in order to save it's state to a file.
+
+[System.Serializable]
 public class BoardGrid {
 
-   BoardTile[,]spot = new BoardTile[8,8];  //spot will be the actual tile you are refering to.
+    public enum PlayerTurn { White, Black }
+    PlayerTurn playerTurn = PlayerTurn.White;
+    public BoardTile[,]spot = new BoardTile[8,8];  //spot will be the actual tile you are refering to.
 
     public BoardGrid()
     {
@@ -58,6 +86,8 @@ public class BoardGrid {
 }
 
 //object container for an actual tile piece
+//serialized to be able to save this data to file
+[System.Serializable]
 public class BoardTile
 {
     public GamePiece pieceonTile;
