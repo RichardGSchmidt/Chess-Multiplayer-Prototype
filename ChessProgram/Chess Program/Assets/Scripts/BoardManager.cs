@@ -17,18 +17,27 @@ public class BoardManager : MonoBehaviour {
 }
 
 
-public class BoardTiles {
+//this object comprises of the entire board itself
+public class Board
+{
+    public BoardGrid boardTiles = new BoardGrid();
+}
 
-   TilePresets[,]transformGrid = new TilePresets[8,8];
 
-    void Start()
+
+//Object Container for the entire board
+public class BoardGrid {
+
+   BoardTile[,]spot = new BoardTile[8,8];  //spot will be the actual tile you are refering to.
+
+    public BoardGrid()
     {
         //filling the transformGrid array
         for (int x = 0; x < 8; x++)
         {
             for (int y = 0; y < 8; y++)
             {
-                transformGrid[x, y].position = new Vector3(-3.5f+x, -3.5f+y, 0);
+                spot[x, y].position = new Vector3(-3.5f+x, -3.5f+y, 0);
             }
         }
     }
@@ -48,33 +57,74 @@ public class BoardTiles {
 
 }
 
-public class TilePresets
+//object container for an actual tile piece
+public class BoardTile
 {
+    public GamePiece pieceonTile;
     public Vector3 position;
+    public bool occupied;
     private float topBoundary;
     private float bottomBoundary;
     private float leftBoundary;
     private float rightBoundary;
-    public TilePresets[,] tilePresets;
+    public BoardTile[,] tilePresets;
 
-    public TilePresets(Vector3 passed)
+    //create a new empty board tile
+    public BoardTile(Vector3 passed)
     {
         position = passed;
         topBoundary = position.y + .5f;
         bottomBoundary = position.y - 5f;
         leftBoundary = position.x + .5f;
         rightBoundary = position.x - .5f;
+        occupied = false;
     }
 
-    public bool isInBoundarys(Vector3 reference)
+    //create a new occupied board tile
+    public BoardTile(Vector3 passed, GamePiece newPiece)
     {
-        bool bowl = false;
+        {
+            occupied = true;
+            pieceonTile = newPiece;
+            pieceonTile.transform.position = position;
+        }
+    }
+
+    public void LeavePosititon()
+    {
+        pieceonTile = null;
+        occupied = false;
+    }
+
+    public void MoveToPosition(GamePiece incomingPiece)
+    {
+        pieceonTile = incomingPiece;
+        occupied = true;
+    }
+
+    public bool MoveIsValid(GamePiece incomingPiece)
+    {
+        bool validMove = false;
+        if (!occupied)
+        {
+            validMove = true;
+        }
+        else if(pieceonTile.playerColor != incomingPiece.playerColor)
+        {
+            validMove = true;
+        }
+        return validMove;
+    }
+
+    public bool CheckIfOnTile(Vector3 reference)
+    {
+        bool onTile = false;
         if ((reference.y < topBoundary)&&(reference.y> bottomBoundary)
             &&(reference.x > leftBoundary)&&reference.x < leftBoundary)
         {
-            bowl = true;
+            onTile = true;
         }
-        return bowl;
+        return onTile;
     }
 
 
