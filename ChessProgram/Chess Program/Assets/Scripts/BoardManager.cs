@@ -19,7 +19,7 @@ public class BoardManager : MonoBehaviour {
 
 public class BoardTiles {
 
-    Vector3[,]transformGrid = new Vector3[8,8];
+   TilePresets[,]transformGrid = new TilePresets[8,8];
 
     void Start()
     {
@@ -28,12 +28,12 @@ public class BoardTiles {
         {
             for (int y = 0; y < 8; y++)
             {
-                transformGrid[x, y] = new Vector3(-3.5f+x, -3.5f+y, 0);
+                transformGrid[x, y].position = new Vector3(-3.5f+x, -3.5f+y, 0);
             }
         }
     }
 
-    public bool CheckIfOnMap(Vector3 reference)
+    public bool CheckIfOnGrid(Vector3 reference)
     {
         //checks to make sure it's inside the coordinate system of the board.
         if ((reference.x < -4f || reference.y < -4f) || (reference.x > 4 || reference.y > 4))

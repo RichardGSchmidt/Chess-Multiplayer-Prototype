@@ -16,14 +16,18 @@ public class GameManager : MonoBehaviour {
     }
 
     private Vector3 mouseLocation;
-    public GamePiece target = null; 
+    public GamePiece target = null;
     public void Update()
     {
         if (selected != null && Input.GetMouseButtonDown(0))
         {
             //gets position of click and saves it to a Vector3
             mouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition); //gets position of click
-
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (hit.collider !=null)
+            {
+             
+            }
         }
 
         target = null;

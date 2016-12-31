@@ -7,6 +7,8 @@ public class GamePiece : MonoBehaviour
     public Renderer rend;
     public bool selected = false;
     public GameManager gameManager;
+    public enum PlayerColor { white, black };
+    public PlayerColor playerColor;
     public void Start()
     {
         gameManager = GameObject.FindWithTag("Board").GetComponent<GameManager>();
