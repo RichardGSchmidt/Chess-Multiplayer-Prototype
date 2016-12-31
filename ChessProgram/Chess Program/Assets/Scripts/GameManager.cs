@@ -5,31 +5,36 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
     public GamePiece selected = null;
+    public BoardManager boardman;
+
+    public void Start()
+    {
+       
+    }
+
+    //public void GotClicked(GamePiece pieceClicked)
+    //{
+    //    if (selected == null|| selected.playerColor.ToString() == boardman.board.playerTurn.ToString())
+    //    {
+    //        selected = pieceClicked;
+    //    }
+    //    else
+    //    {
+    //        if (boardman.AttackIsValid(selected, pieceClicked))
+    //        {
+    //            IntVector2 refToMoveTo = pieceClicked.location;
+    //            boardman.MoveTo(selected, refToMoveTo);
+
+    //        }
+    //    }
+    //}
+
     public void SetSelection(GamePiece newSelection)
     {
-        if (selected != null)
-        {
-            //deselects if no selection availble
-            selected.selected = false;  
-        }
         selected = newSelection;
     }
 
     private Vector3 mouseLocation;
     public GamePiece target = null;
-    public void Update()
-    {
-        if (selected != null && Input.GetMouseButtonDown(0))
-        {
-            //gets position of click and saves it to a Vector3
-            mouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition); //gets position of click
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider !=null)
-            {
-             
-            }
-        }
-
-        target = null;
-    }
+    
 }

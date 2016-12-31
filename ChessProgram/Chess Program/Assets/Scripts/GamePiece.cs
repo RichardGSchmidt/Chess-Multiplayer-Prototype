@@ -6,39 +6,111 @@ public class GamePiece : MonoBehaviour
 {
     string nameOfPiece;
 
-    public enum PlayerColor { white, black };
-    public PlayerColor playerColor;
+    public enum PlayerColor {White,Black};
+    public PlayerColor pieceColor;
+    public BoardTile ownerTile;
 
+
+    public BoxCollider2D boxCollider;
     public bool selected;
     public bool firstmove;
     public bool isKing;
     public int value;
+    public IntVector2 location;
 
     [HideInInspector]
     public GameManager gameManager;
     [HideInInspector]
     public Renderer rend;
+    public BoardManager boardManager;
 
 
     public MovementMap movementMap;
 
-    virtual public void Start()
+    public void Start()
     {
+        boxCollider = GetComponent<BoxCollider2D>();
         gameManager = GameObject.FindWithTag("Board").GetComponent<GameManager>();
         rend = GetComponent<Renderer>();
-    }
-    public void OnMouseDown()
-    {
-        selected = true;
-        gameManager.SetSelection(this);
-    }
-
-    public void Deselect()
-    {
+        boardManager = GameObject.FindObjectOfType<BoardManager>();
         selected = false;
     }
 
-    virtual public MovementMap GetMovementMap()
+    public void Update()
+    {
+        if (selected)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 areaClicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                if (boardManager.board.OnGameBoard(areaClicked))
+                {
+                    IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
+                    if (boardManager.board.spot[locationClicked.x, locationClicked.y].occupied
+                        &&(boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.pieceColor != boardManager.board.colorsTurn))
+                    {
+                        if(boardManager.AttackIsValid(this, boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile))
+                        {
+                            boardManager.MoveTo(this, location);
+                            if (pieceColor == PlayerColor.White)
+                            {
+                                boardManager.board.colorsTurn = PlayerColor.Black;
+                            }
+                            else if (pieceColor == PlayerColor.Black)
+                            {
+                                boardManager.board.colorsTurn = PlayerColor.White;
+                            }
+                        }
+                    }
+                    else if (boardManager.MoveIsValid(this, locationClicked.x, locationClicked.y))
+                    {
+                        boardManager.MoveTo(this, location);
+                        if (pieceColor == PlayerColor.White)
+                        {
+                            boardManager.board.colorsTurn = PlayerColor.Black;
+                        }
+                        else if (pieceColor == PlayerColor.Black)
+                        {
+                            boardManager.board.colorsTurn = PlayerColor.White;
+                        }
+                    }
+                }
+                selected = false;
+                boardManager.selectionStatus = false;
+                
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                selected = false;
+                boardManager.selectionStatus = false;
+            }
+        }
+
+        else if (!boardManager.selectionStatus)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 areaClicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                if (boardManager.board.OnGameBoard(areaClicked))
+                {
+                    IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
+                    if ((boardManager.board.spot[locationClicked.x, locationClicked.y].occupied)
+                        &&(boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.pieceColor 
+                        == boardManager.board.colorsTurn))
+                    {
+                        selected = true;
+                        boardManager.selectionStatus = true;
+                    }
+                }
+            }
+        }
+
+        
+    }
+
+
+
+    public MovementMap GetMovementMap()
     {
         return movementMap;
     }
@@ -71,6 +143,7 @@ public struct IntVector2
 {
     public int x;
     public int y;
+    
 }
 
 [System.Serializable]

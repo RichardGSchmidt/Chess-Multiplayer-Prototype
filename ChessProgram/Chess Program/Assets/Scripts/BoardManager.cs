@@ -5,16 +5,18 @@ using UnityEngine;
 //this object is represents the entire board
 public class BoardManager : MonoBehaviour
 {
-    BoardGrid board;
+    public BoardGrid board;
     public GamePiece[] gamePieces;
+    public bool selectionStatus;
+
 
 
     public void Start()
     {
         board = new BoardGrid();
         LayOutBoardForPlay();
-
-        
+        board.colorsTurn = GamePiece.PlayerColor.White;
+        selectionStatus = false;
     }
 
     public void LoadBoard(BoardGrid boardToBeLoaded)
@@ -31,62 +33,62 @@ public class BoardManager : MonoBehaviour
                 if (y == 1)
                 {
                     GamePiece toInstantiate = gamePieces[9];
-                    board.spot[x,y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x,y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 else if(y==6)
                 {
                     GamePiece toInstantiate = gamePieces[3];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if ((x == 0 && y == 0) ||(x==7&&y==0))
                 {
                     GamePiece toInstantiate = gamePieces[11];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if ((x == 0 && y == 7) || (x == 7 && y == 7))
                 {
                     GamePiece toInstantiate = gamePieces[5];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if ((x == 1 && y == 0) || (x == 6 && y == 0))
                 {
                     GamePiece toInstantiate = gamePieces[8];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if ((x == 1 && y == 7) || (x == 6 && y == 7))
                 {
                     GamePiece toInstantiate = gamePieces[2];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if ((x == 2 && y == 0) || (x == 5 && y == 0))
                 {
                     GamePiece toInstantiate = gamePieces[6];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if ((x == 2 && y == 7) || (x == 5 && y == 7))
                 {
                     GamePiece toInstantiate = gamePieces[0];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if (x == 3 && y == 7)
                 {
                     GamePiece toInstantiate = gamePieces[4];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if (x == 3 && y == 0)
                 {
                     GamePiece toInstantiate = gamePieces[10];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if (x==4 && y ==0)
                 {
                     GamePiece toInstantiate = gamePieces[7];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if (x==4 && y == 7)
                 {
                     GamePiece toInstantiate = gamePieces[1];
-                    board.spot[x, y].MoveToPosition((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
+                    board.spot[x, y].SetPiece((Instantiate(toInstantiate, board.spot[x, y].position, Quaternion.identity)));
                 }
                 if(board.spot[x,y].pieceonTile != null)
                 {
@@ -94,6 +96,158 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool MoveIsValid (GamePiece piece, int xLoc, int yLoc)
+    {
+
+        if (piece.movementMap.TotalMovementAxis.diagonals)
+        {            
+            // piece being moved has x, y location
+            // with movement providing an x,y offset.
+            // Therefor if ratio of the difference is 
+            // the absolute value of one the path is on
+            // a diagonal. and the rest of this script aplies
+
+            if(Mathf.Abs((piece.location.x - xLoc)/(piece.location.y-yLoc)) == 1)
+            {
+                piece.boxCollider.enabled = false;
+                RaycastHit2D hit = Physics2D.Raycast(piece.transform.position, board.spot[xLoc,yLoc].position, 20, 8);
+                if (hit.collider == null)
+                {
+                    piece.boxCollider.enabled = true;
+                    return true;
+                }
+            }
+            
+        }
+
+        if (piece.movementMap.TotalMovementAxis.xyAxis)
+        {
+            if (piece.location.y == yLoc || piece.location.x == xLoc)
+            {
+                piece.boxCollider.enabled = false;
+                RaycastHit2D hit = Physics2D.Raycast(piece.transform.position, board.spot[xLoc, yLoc].position, 20, 8);
+                if (hit.collider == null)
+                {
+                    piece.boxCollider.enabled = true;
+                    return true;
+                }
+            }
+        }
+
+        if (piece.movementMap.CanMoveIfEmpty.Length > 0)
+        {
+            for (int i = 0; i < piece.movementMap.CanMoveIfEmpty.Length; i++)
+            {
+                if ((piece.movementMap.CanMoveIfEmpty[i].x == xLoc - piece.location.x)&& (piece.movementMap.CanMoveIfEmpty[i].y == yLoc - piece.location.y))
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (piece.firstmove&&piece.movementMap.CanMoveIfFirstMoveAndClear.Length > 1)
+        {
+            if (piece.movementMap.CanMoveIfEnemy.Length > 0)
+            {
+                for (int i = 0; i < piece.movementMap.CanMoveIfEnemy.Length; i++)
+                {
+                    if ((piece.movementMap.CanMoveIfEnemy[i].x == xLoc - piece.location.x) && (piece.movementMap.CanMoveIfEnemy[i].y == yLoc - piece.location.y))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+
+    }
+
+    public bool AttackIsValid(GamePiece pieceToBeMoved, GamePiece pieceOnTile)
+    {
+        pieceToBeMoved.boxCollider.enabled = false;
+        pieceOnTile.boxCollider.enabled = false;
+        if (pieceToBeMoved.movementMap.TotalMovementAxis.diagonals)
+        {
+            // piece being moved has x, y location
+            // with movement providing an x,y offset.
+            // Therefor if ratio of the difference is 
+            // the absolute value of one the path is on
+            // a diagonal. and the rest of this script aplies
+
+            if (Mathf.Abs((pieceToBeMoved.location.x - pieceOnTile.location.x) / (pieceToBeMoved.location.y - pieceOnTile.location.y)) == 1)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(pieceToBeMoved.transform.position, pieceOnTile.transform.position, 20, 8);
+                if (hit.collider == null)
+                {
+                    pieceToBeMoved.boxCollider.enabled = true;
+                    pieceOnTile.boxCollider.enabled = true;
+                    return true;
+                }
+            }
+
+        }
+
+        if (pieceToBeMoved.movementMap.TotalMovementAxis.xyAxis)
+        {
+            if (pieceToBeMoved.location.y == pieceOnTile.location.y || pieceToBeMoved.location.x == pieceOnTile.location.x)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(pieceToBeMoved.transform.position, pieceOnTile.transform.position, 20, 8);
+                if (hit.collider == null)
+                {
+                    pieceToBeMoved.boxCollider.enabled = true;
+                    pieceOnTile.boxCollider.enabled = true;
+                    return true;
+                }
+            }
+        }
+
+        if (pieceToBeMoved.movementMap.CanMoveIfEmpty.Length > 0)
+        {
+            for (int i = 0; i < pieceToBeMoved.movementMap.CanMoveIfEmpty.Length; i++)
+            {
+                if ((pieceToBeMoved.movementMap.CanMoveIfEmpty[i].x == pieceOnTile.location.x - pieceToBeMoved.location.x) && (pieceToBeMoved.movementMap.CanMoveIfEmpty[i].y == pieceOnTile.location.y - pieceToBeMoved.location.y))
+                {
+                    pieceToBeMoved.boxCollider.enabled = true;
+                    pieceOnTile.boxCollider.enabled = true;
+                    return true;
+                }
+            }
+        }
+
+        if (pieceToBeMoved.movementMap.CanMoveIfEnemy.Length > 0)
+        {
+            if (pieceToBeMoved.movementMap.CanMoveIfEnemy.Length > 0)
+            {
+                for (int i = 0; i < pieceToBeMoved.movementMap.CanMoveIfEnemy.Length; i++)
+                {
+                    if ((pieceToBeMoved.movementMap.CanMoveIfEnemy[i].x == pieceOnTile.location.x - pieceToBeMoved.location.x) && (pieceToBeMoved.movementMap.CanMoveIfEnemy[i].y == pieceOnTile.location.y - pieceToBeMoved.location.y))
+                    {
+                        pieceToBeMoved.boxCollider.enabled = true;
+                        pieceOnTile.boxCollider.enabled = true;
+                        return true;
+                    }
+                }
+            }
+        }
+        pieceToBeMoved.boxCollider.enabled = true;
+        pieceOnTile.boxCollider.enabled = true;
+        return false;
+
+    }
+
+    //clears and moves.
+    public void MoveTo(GamePiece pieceToBeMoved, IntVector2 refToMoveTo)
+    {
+        if (board.spot[refToMoveTo.x,refToMoveTo.y].pieceonTile!=null)
+        {
+            Destroy(board.spot[refToMoveTo.x, refToMoveTo.y].pieceonTile);
+            board.spot[refToMoveTo.x, refToMoveTo.y].pieceonTile = null;
+        }
+        board.spot[refToMoveTo.x, refToMoveTo.y].SetPiece(pieceToBeMoved);
+
     }
 
     public void ClearBoardofPieces()
@@ -120,8 +274,8 @@ public class BoardManager : MonoBehaviour
 
 public class BoardGrid {
 
-    public enum PlayerTurn { White, Black }
-    PlayerTurn playerTurn = PlayerTurn.White;
+    
+    public GamePiece.PlayerColor colorsTurn = GamePiece.PlayerColor.White;
     public BoardTile[,] spot = new BoardTile[8, 8];
 
     public BoardGrid()
@@ -132,12 +286,15 @@ public class BoardGrid {
         {
             for (int y = 0; y < spot.GetLength(1); y++)
             {
-                spot[x, y] = new BoardTile(new Vector3(-3.5f+x, -3.5f+y, 0));
+                IntVector2 gridReference;
+                gridReference.x = x;
+                gridReference.y = y;
+                spot[x, y] = new BoardTile(new Vector3(-3.5f+x, -3.5f+y, 0),gridReference);
             }
         }
     }
 
-    public bool CheckIfOnGrid(Vector3 reference)
+    public bool OnGameBoard(Vector3 reference)
     {
         //checks to make sure it's inside the coordinate system of the board.
         if ((reference.x < -4f || reference.y < -4f) || (reference.x > 4 || reference.y > 4))
@@ -145,6 +302,16 @@ public class BoardGrid {
             return false;
         }
         else return true;
+    }
+
+    public IntVector2 GetGridReference(Vector3 rawInput)
+    {
+        IntVector2 referenceVector;
+        //casting to int automatically truncates in C#
+        referenceVector.x = (int)(rawInput.x + 4);
+        referenceVector.y = (int)(rawInput.y + 4);
+        return referenceVector;
+
     }
     
 
@@ -159,19 +326,22 @@ public class BoardTile
     public GamePiece pieceonTile;
     public Vector3 position;
     public bool occupied;
+    public IntVector2 gridReference;
     private float topBoundary;
     private float bottomBoundary;
     private float leftBoundary;
     private float rightBoundary;
+    
 
     //create a new empty board tile
-    public BoardTile(Vector3 passed)
+    public BoardTile(Vector3 passed, IntVector2 refNumbers)
     {
         position = passed;
         topBoundary = position.y + .5f;
         bottomBoundary = position.y - 5f;
         leftBoundary = position.x + .5f;
         rightBoundary = position.x - .5f;
+        gridReference = refNumbers;
         occupied = false;
     }
 
@@ -185,16 +355,11 @@ public class BoardTile
         }
     }
 
+    //called before move on original object
     public void LeavePosititon()
     {
         pieceonTile = null;
         occupied = false;
-    }
-
-    public void MoveToPosition(GamePiece incomingPiece)
-    {
-        pieceonTile = incomingPiece;
-        occupied = true;
     }
 
     public bool MoveIsValid(GamePiece incomingPiece)
@@ -204,11 +369,24 @@ public class BoardTile
         {
             validMove = true;
         }
-        else if(pieceonTile.playerColor != incomingPiece.playerColor)
+        else if(pieceonTile.pieceColor != incomingPiece.pieceColor)
         {
             validMove = true;
         }
         return validMove;
+    }
+
+    public void SetPiece(GamePiece pieceSent)
+    {
+        if (pieceSent.ownerTile != null)
+        {
+            pieceSent.ownerTile.LeavePosititon();
+        }
+        pieceSent.location = gridReference;
+        pieceSent.transform.position = position;
+        pieceSent.ownerTile = this;
+        occupied = true;
+        pieceonTile = pieceSent;
     }
 
     public bool CheckIfOnTile(Vector3 reference)
