@@ -34,6 +34,10 @@ public class GamePiece : MonoBehaviour
         selected = false;
     }
 
+    public void DestroySelf()
+    {
+        Destroy (this);
+    }
      
 }
 

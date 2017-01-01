@@ -243,8 +243,7 @@ public class BoardManager : MonoBehaviour
     {
         if (board.spot[refToMoveTo.x,refToMoveTo.y].pieceonTile!=null)
         {
-            Destroy(board.spot[refToMoveTo.x, refToMoveTo.y].pieceonTile);
-            board.spot[refToMoveTo.x, refToMoveTo.y].pieceonTile = null;
+            board.spot[refToMoveTo.x, refToMoveTo.y].pieceonTile.DestroySelf();
         }
         board.spot[refToMoveTo.x, refToMoveTo.y].SetPiece(pieceToBeMoved);
 
@@ -260,10 +259,6 @@ public class BoardManager : MonoBehaviour
 
     }
 
-    public void RemovePiece()
-    {
-
-    }
 
 }
 

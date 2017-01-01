@@ -64,6 +64,10 @@ public class GameManager : MonoBehaviour {
                         {
                             boardManager.MoveTo(selected, locationClicked);
                             selectionStatus = false;
+                            if (selected != null)
+                            {
+                                selected.selected = false;
+                            }
                             if(PlayerTurn == GamePiece.PlayerColor.White)
                             {
                                 PlayerTurn = GamePiece.PlayerColor.Black;
@@ -80,6 +84,10 @@ public class GameManager : MonoBehaviour {
                     {
                         boardManager.MoveTo(selected, locationClicked);
                         selectionStatus = false;
+                        if(selected != null)
+                        {
+                            selected.selected = false;
+                        }
                         if (PlayerTurn == GamePiece.PlayerColor.White)
                         {
                             PlayerTurn = GamePiece.PlayerColor.Black;
