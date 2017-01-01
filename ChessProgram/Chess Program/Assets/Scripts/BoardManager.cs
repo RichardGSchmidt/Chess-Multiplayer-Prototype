@@ -109,7 +109,7 @@ public class BoardManager : MonoBehaviour
             // the absolute value of one the path is on
             // a diagonal. and the rest of this script aplies
 
-            if(Mathf.Abs((piece.location.x - xLoc)/(piece.location.y-yLoc)) == 1)
+            if((piece.location.y-yLoc!=0)&&((Mathf.Abs((piece.location.x - xLoc)/(piece.location.y-yLoc))) == 1))
             {
                 piece.boxCollider.enabled = false;
                 RaycastHit2D hit = Physics2D.Raycast(piece.transform.position, board.spot[xLoc,yLoc].position, 20, 8);
@@ -286,7 +286,7 @@ public class BoardGrid {
         {
             for (int y = 0; y < spot.GetLength(1); y++)
             {
-                IntVector2 gridReference;
+                IntVector2 gridReference = new IntVector2();
                 gridReference.x = x;
                 gridReference.y = y;
                 spot[x, y] = new BoardTile(new Vector3(-3.5f+x, -3.5f+y, 0),gridReference);
@@ -306,7 +306,7 @@ public class BoardGrid {
 
     public IntVector2 GetGridReference(Vector3 rawInput)
     {
-        IntVector2 referenceVector;
+        IntVector2 referenceVector = new IntVector2();
         //casting to int automatically truncates in C#
         referenceVector.x = (int)(rawInput.x + 4);
         referenceVector.y = (int)(rawInput.y + 4);

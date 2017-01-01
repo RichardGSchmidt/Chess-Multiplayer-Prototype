@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GamePiece : MonoBehaviour
 {
-    string nameOfPiece;
-
     public enum PlayerColor {White,Black};
     public PlayerColor pieceColor;
     public BoardTile ownerTile;
@@ -36,95 +34,7 @@ public class GamePiece : MonoBehaviour
         selected = false;
     }
 
-    public void Update()
-    {
-        if (selected)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 areaClicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (boardManager.board.OnGameBoard(areaClicked))
-                {
-                    IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
-                    if (boardManager.board.spot[locationClicked.x, locationClicked.y].occupied
-                        &&(boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.pieceColor != boardManager.board.colorsTurn))
-                    {
-                        if(boardManager.AttackIsValid(this, boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile))
-                        {
-                            boardManager.MoveTo(this, location);
-                            if (pieceColor == PlayerColor.White)
-                            {
-                                boardManager.board.colorsTurn = PlayerColor.Black;
-                            }
-                            else if (pieceColor == PlayerColor.Black)
-                            {
-                                boardManager.board.colorsTurn = PlayerColor.White;
-                            }
-                        }
-                    }
-                    else if (boardManager.MoveIsValid(this, locationClicked.x, locationClicked.y))
-                    {
-                        boardManager.MoveTo(this, location);
-                        if (pieceColor == PlayerColor.White)
-                        {
-                            boardManager.board.colorsTurn = PlayerColor.Black;
-                        }
-                        else if (pieceColor == PlayerColor.Black)
-                        {
-                            boardManager.board.colorsTurn = PlayerColor.White;
-                        }
-                    }
-                }
-                selected = false;
-                boardManager.selectionStatus = false;
-                
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                selected = false;
-                boardManager.selectionStatus = false;
-            }
-        }
-
-        else if (!boardManager.selectionStatus)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 areaClicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (boardManager.board.OnGameBoard(areaClicked))
-                {
-                    IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
-                    if ((boardManager.board.spot[locationClicked.x, locationClicked.y].occupied)
-                        &&(boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.pieceColor 
-                        == boardManager.board.colorsTurn))
-                    {
-                        selected = true;
-                        boardManager.selectionStatus = true;
-                    }
-                }
-            }
-        }
-
-        
-    }
-
-
-
-    public MovementMap GetMovementMap()
-    {
-        return movementMap;
-    }
-
-
-    public void OnMouseEnter()
-    {
-        //if can move and same color
-        rend.material.color = Color.green;
-    }
-    public void OnMouseExit()
-    {
-        rend.material.color = Color.white;
-    }
+     
 }
 
 // stores the possible movements a piece can make in their positive direction.
@@ -139,11 +49,10 @@ public class MovementMap
 }
 
 [System.Serializable]
-public struct IntVector2
+public class IntVector2
 {
     public int x;
     public int y;
-    
 }
 
 [System.Serializable]
