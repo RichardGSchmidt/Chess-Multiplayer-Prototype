@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //this object is represents the entire board
-#region Board Management
 public class BoardManager : MonoBehaviour
 {
     public BoardGrid board;
@@ -11,17 +10,19 @@ public class BoardManager : MonoBehaviour
     public bool selectionStatus;
 
 
-    #region Mono
+
     public void Start()
     {
         board = new BoardGrid();
         LayOutBoardForPlay();
         selectionStatus = false;
     }
-    #endregion
 
+    public void LoadBoard(BoardGrid boardToBeLoaded)
+    {
+        board = boardToBeLoaded;
+    }
 
-    #region Board Layout
     public void LayOutBoardForPlay()
     {
         for (int x = 0; x < board.spot.GetLength(0); x++)
@@ -95,8 +96,7 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
-    #endregion
-    #region Movement and Attack Logic
+
     //logic for checking if a move is valid
     public bool MoveIsValid (GamePiece piece, int xLoc, int yLoc)
     {
@@ -172,7 +172,6 @@ public class BoardManager : MonoBehaviour
     }
 
     //logic for checking validity of an attack
-
     public bool AttackIsValid(GamePiece pieceToBeMoved, GamePiece pieceOnTile)
     {
         pieceToBeMoved.boxCollider.enabled = false;
@@ -246,9 +245,7 @@ public class BoardManager : MonoBehaviour
         return false;
 
     }
-    #endregion
 
-    #region movement commands
     //clears spot if filled and moves to
     public void MoveTo(GamePiece pieceToBeMoved, IntVector2 refToMoveTo)
     {
@@ -260,32 +257,25 @@ public class BoardManager : MonoBehaviour
         board.spot[refToMoveTo.x, refToMoveTo.y].SetPiece(pieceToBeMoved);
 
     }
-    #endregion
 
-    #region to be implemented
     public void ClearBoardofPieces()
     {
 
-    }
-
-    public void LoadBoard(BoardGrid boardToBeLoaded)
-    {
-        board = boardToBeLoaded;
     }
 
     public void PlacePiece()
     {
 
     }
-    #endregion
 
 
 }
-#endregion
 
 
 
-#region Board Logic Containers
+//Object Container for the entire board and it's layout
+//serialized in order to save it's state to a file.
+
 public class BoardGrid {
 
     public BoardTile[,] spot = new BoardTile[8, 8];
@@ -388,7 +378,7 @@ public class BoardTile
         return validMove;
     }
 
-    public void SetPiece(GamePiece pieceSent) //used for initial instantiation
+    public void SetPiece(GamePiece pieceSent)
     {
         if (pieceSent.ownerTile != null)
         {
@@ -417,4 +407,3 @@ public class BoardTile
 
 
 }
-#endregion
