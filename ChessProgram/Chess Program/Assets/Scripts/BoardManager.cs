@@ -113,9 +113,9 @@ public class BoardManager : MonoBehaviour
             {
                 piece.boxCollider.enabled = false;
                 RaycastHit2D hit = Physics2D.Raycast(piece.transform.position, board.spot[xLoc,yLoc].position, 20, 8);
+                piece.boxCollider.enabled = true;
                 if (hit.collider == null)
                 {
-                    piece.boxCollider.enabled = true;
                     return true;
                 }
             }
@@ -128,9 +128,9 @@ public class BoardManager : MonoBehaviour
             {
                 piece.boxCollider.enabled = false;
                 RaycastHit2D hit = Physics2D.Raycast(piece.transform.position, board.spot[xLoc, yLoc].position, 20, 8);
+                piece.boxCollider.enabled = true;
                 if (hit.collider == null)
                 {
-                    piece.boxCollider.enabled = true;
                     return true;
                 }
             }
@@ -147,18 +147,24 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        if (piece.firstmove&&piece.movementMap.CanMoveIfFirstMoveAndClear.Length > 1)
+        if ((piece.firstmove)&&(piece.firstmove&&piece.movementMap.CanMoveIfFirstMoveAndClear.Length > 0))
         {
-            if (piece.movementMap.CanMoveIfEnemy.Length > 0)
-            {
-                for (int i = 0; i < piece.movementMap.CanMoveIfEnemy.Length; i++)
+            
+             for (int i = 0; i < piece.movementMap.CanMoveIfFirstMoveAndClear.Length; i++)
+             {
+                if ((piece.movementMap.CanMoveIfFirstMoveAndClear[i].x == xLoc - piece.location.x) && (piece.movementMap.CanMoveIfFirstMoveAndClear[i].y == yLoc - piece.location.y))
                 {
-                    if ((piece.movementMap.CanMoveIfEnemy[i].x == xLoc - piece.location.x) && (piece.movementMap.CanMoveIfEnemy[i].y == yLoc - piece.location.y))
-                    {
+                    piece.boxCollider.enabled = false;
+                    RaycastHit2D hit = Physics2D.Raycast(piece.transform.position, board.spot[xLoc,yLoc].position, 20, 8);
+                    piece.boxCollider.enabled = true;
+                    if (hit.collider == null)
+                    
+                    {         
                         return true;
                     }
+                
                 }
-            }
+             }
         }
 
         return false;
@@ -175,9 +181,10 @@ public class BoardManager : MonoBehaviour
             // with movement providing an x,y offset.
             // Therefor if ratio of the difference is 
             // the absolute value of one the path is on
-            // a diagonal. and the rest of this script aplies
+            // a diagonal. first part is divide by zero
+            // prevention.
 
-            if (Mathf.Abs((pieceToBeMoved.location.x - pieceOnTile.location.x) / (pieceToBeMoved.location.y - pieceOnTile.location.y)) == 1)
+            if ((pieceToBeMoved.location.y!=pieceOnTile.location.y)&&(Mathf.Abs((pieceToBeMoved.location.x - pieceOnTile.location.x) / (pieceToBeMoved.location.y - pieceOnTile.location.y)) == 1))
             {
                 RaycastHit2D hit = Physics2D.Raycast(pieceToBeMoved.transform.position, pieceOnTile.transform.position, 20, 8);
                 if (hit.collider == null)

@@ -36,7 +36,7 @@ public class GamePiece : MonoBehaviour
 
     public void DestroySelf()
     {
-        Destroy (this);
+        Destroy (gameObject);
     }
      
 }
