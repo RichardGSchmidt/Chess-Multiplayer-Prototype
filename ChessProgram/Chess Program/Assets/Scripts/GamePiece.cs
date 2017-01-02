@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class GamePiece : MonoBehaviour
 {
-    public enum PlayerColor {White,Black};
-    public PlayerColor pieceColor;
+    public bool color;
     public BoardTile ownerTile;
 
 
