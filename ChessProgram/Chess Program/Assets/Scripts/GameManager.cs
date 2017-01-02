@@ -15,8 +15,14 @@ public class GameManager : MonoBehaviour {
         selectionStatus = false;
     }
 
+    private void OnGUI()
+    {
+        GUI.Box(new Rect(Screen.height * .01f, Screen.width * .01f, Screen.width * .15f, Screen.height * .1f), "Turn: " + PlayerTurn.ToString());
+    }
+
     public void Update()
     {
+        
 
         if (!selectionStatus)
         {
@@ -43,7 +49,7 @@ public class GameManager : MonoBehaviour {
             if (Input.GetMouseButtonDown(0))
             {
                 Vector3 areaClicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (boardManager.board.OnGameBoard(areaClicked))
+                if (areaClicked!=null&&(boardManager.board.OnGameBoard(areaClicked)))
                 {
                     //convert mouse location into game grid location
                     IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
@@ -68,6 +74,7 @@ public class GameManager : MonoBehaviour {
                             {
                                 selected.selected = false;
                             }
+                            // there is a bug in this logic
                             if(PlayerTurn == GamePiece.PlayerColor.White)
                             {
                                 PlayerTurn = GamePiece.PlayerColor.Black;

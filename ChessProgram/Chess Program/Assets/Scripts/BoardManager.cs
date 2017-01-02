@@ -98,6 +98,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    //logic for checking if a move is valid
     public bool MoveIsValid (GamePiece piece, int xLoc, int yLoc)
     {
 
@@ -171,6 +172,7 @@ public class BoardManager : MonoBehaviour
 
     }
 
+    //logic for checking validity of an attack
     public bool AttackIsValid(GamePiece pieceToBeMoved, GamePiece pieceOnTile)
     {
         pieceToBeMoved.boxCollider.enabled = false;
@@ -245,9 +247,10 @@ public class BoardManager : MonoBehaviour
 
     }
 
-    //clears and moves.
+    //clears spot if filled and moves to
     public void MoveTo(GamePiece pieceToBeMoved, IntVector2 refToMoveTo)
     {
+        if (pieceToBeMoved.firstmove) pieceToBeMoved.firstmove = false;
         if (board.spot[refToMoveTo.x,refToMoveTo.y].pieceonTile!=null)
         {
             board.spot[refToMoveTo.x, refToMoveTo.y].pieceonTile.DestroySelf();

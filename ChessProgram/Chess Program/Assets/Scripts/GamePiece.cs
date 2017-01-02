@@ -30,8 +30,19 @@ public class GamePiece : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         gameManager = GameObject.FindWithTag("Board").GetComponent<GameManager>();
         rend = GetComponent<Renderer>();
-        boardManager = GameObject.FindObjectOfType<BoardManager>();
+        boardManager = FindObjectOfType<BoardManager>();
         selected = false;
+    }
+    public void Update()
+    {
+        if (selected)
+        {
+            rend.material.color = Color.green;
+        }
+        else
+        {
+            rend.material.color = Color.white;
+        }
     }
 
     public void DestroySelf()
