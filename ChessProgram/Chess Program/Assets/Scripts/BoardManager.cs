@@ -15,7 +15,6 @@ public class BoardManager : MonoBehaviour
     {
         board = new BoardGrid();
         LayOutBoardForPlay();
-        board.colorsTurn = GamePiece.PlayerColor.White;
         selectionStatus = false;
     }
 
@@ -279,8 +278,6 @@ public class BoardManager : MonoBehaviour
 
 public class BoardGrid {
 
-    
-    public GamePiece.PlayerColor colorsTurn = GamePiece.PlayerColor.White;
     public BoardTile[,] spot = new BoardTile[8, 8];
 
     public BoardGrid()
@@ -374,7 +371,7 @@ public class BoardTile
         {
             validMove = true;
         }
-        else if(pieceonTile.pieceColor != incomingPiece.pieceColor)
+        else if(pieceonTile.color != incomingPiece.color)
         {
             validMove = true;
         }

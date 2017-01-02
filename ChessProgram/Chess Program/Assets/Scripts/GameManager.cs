@@ -7,17 +7,37 @@ public class GameManager : MonoBehaviour {
     public GamePiece selected = null;
     public BoardManager boardManager;
     public bool selectionStatus;
-    public GamePiece.PlayerColor PlayerTurn;
-    public void Start()
+    public bool turn;
+
+    private void NextTurn()
     {
-        PlayerTurn = GamePiece.PlayerColor.White;
+        if (selected != null)
+        {
+            selected.selected = false;
+        }
+        selectionStatus = false;
+        selected = null;
+        turn = !turn;
+    }
+
+    private string WhosTurn()
+    {
+        string colorOfPlayer = "Black";
+        if (turn) colorOfPlayer = "White";
+        return colorOfPlayer;
+    }
+
+
+    private void Start()
+    {
+        
         boardManager = FindObjectOfType<BoardManager>();
         selectionStatus = false;
     }
 
     private void OnGUI()
     {
-        GUI.Box(new Rect(Screen.height * .01f, Screen.width * .01f, Screen.width * .15f, Screen.height * .1f), "Turn: " + PlayerTurn.ToString());
+        GUI.Box(new Rect(Screen.height * .01f, Screen.width * .01f, Screen.width * .15f, Screen.height * .1f), "Turn: " + WhosTurn());
     }
 
     public void Update()
@@ -35,7 +55,7 @@ public class GameManager : MonoBehaviour {
                     IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
                     BoardTile tileHolder = boardManager.board.spot[locationClicked.x,locationClicked.y];  
                     //if an object at the clicked location exists and is the same color, select the object;
-                    if ((tileHolder.occupied)&&(PlayerTurn.ToString() == tileHolder.pieceonTile.pieceColor.ToString()))
+                    if ((tileHolder.occupied)&&(turn == tileHolder.pieceonTile.color))
                     {
                         boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.selected = true;
                         selected = boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile;
@@ -59,7 +79,7 @@ public class GameManager : MonoBehaviour {
                     //if an object at the clicked location exists and is the same color, select the object;
                     if ((tileHolder.occupied))
                     {
-                        if (tileHolder.pieceonTile.pieceColor == boardManager.board.colorsTurn)
+                        if (tileHolder.pieceonTile.color == turn)
                         {
                             boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.selected = true;
                             selected = boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile;
@@ -69,43 +89,19 @@ public class GameManager : MonoBehaviour {
                         else if (boardManager.AttackIsValid(selected, tileHolder.pieceonTile))
                         {
                             boardManager.MoveTo(selected, locationClicked);
-                            selectionStatus = false;
-                            if (selected != null)
-                            {
-                                selected.selected = false;
-                            }
-                            // there is a bug in this logic
-                            if(PlayerTurn == GamePiece.PlayerColor.White)
-                            {
-                                PlayerTurn = GamePiece.PlayerColor.Black;
-                            }
-                            else
-                            {
-                                PlayerTurn = GamePiece.PlayerColor.White;
-                            }
-                            selected = null;
+                            NextTurn();
                         }
                     }
                     //if there was an on grid click without an object present
+
+                    //move to
                     else if (boardManager.MoveIsValid(selected, locationClicked.x, locationClicked.y))
                     {
                         boardManager.MoveTo(selected, locationClicked);
-                        selectionStatus = false;
-                        if(selected != null)
-                        {
-                            selected.selected = false;
-                        }
-                        if (PlayerTurn == GamePiece.PlayerColor.White)
-                        {
-                            PlayerTurn = GamePiece.PlayerColor.Black;
-                        }
-                        else
-                        {
-                            PlayerTurn = GamePiece.PlayerColor.White;
-                        }
-                        selected = null;
+                        NextTurn();
                     }
 
+                    //or unselect
                     else
                     {
                         selectionStatus = false;
