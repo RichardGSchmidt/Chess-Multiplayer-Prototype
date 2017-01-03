@@ -3,18 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //to be used to handle turns in hotseat
-//need pull the logic handling turns out of the raw
-//game manager logic to support networked multiplayer
-public class TurnManager : MonoBehaviour {
+//registers as two seperate entities and handles turns for both of them
+//starting point to getting the code reconstructed to make
+//sense as multiplayer code
+
+public class TurnManager : MonoBehaviour
+{
 
     bool turn;
-	// Use this for initialization
+	
 	void Start ()
     {
         turn = true;	
 	}
 	
 	// Move mouse handling over to this function instead of on the game manager maybe?
+    // Have mouse commands send requests to the game manager, but the manager only responds if the client has turn
+    // rights.
+    // This essentially is the player controller, so the gamemanager needs to be reconstructed to match more
+    // player control driven design.
 	void Update ()
     {
 		
