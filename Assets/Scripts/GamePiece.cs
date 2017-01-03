@@ -67,6 +67,16 @@ public class IntVector2
 {
     public int x;
     public int y;
+
+    public IntVector2(int a, int b)
+    {
+        x = a;
+        y = b;
+    }
+    public IntVector2()
+    {
+
+    }
 }
 
 [System.Serializable]

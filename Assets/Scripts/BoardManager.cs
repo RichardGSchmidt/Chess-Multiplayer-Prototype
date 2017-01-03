@@ -9,6 +9,7 @@ public class BoardManager : MonoBehaviour
     public BoardGrid board;
     public GamePiece[] gamePieces;
     public bool selectionStatus;
+    
 
 
 
@@ -17,13 +18,11 @@ public class BoardManager : MonoBehaviour
         board = new BoardGrid();
         LayOutBoardForPlay();
         selectionStatus = false;
+        
     }
 
-    public void LoadBoard(BoardGrid boardToBeLoaded)
-    {
-        board = boardToBeLoaded;
-    }
 
+    #region load board with default setup
     public void LayOutBoardForPlay()
     {
         for (int x = 0; x < board.spot.GetLength(0); x++)
@@ -97,8 +96,56 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
-    //logic for checking if a move is valid
+    #region Check if in Check
+    public bool CheckforCheck(bool player, BoardGrid boardLayout)
+    {
+        GamePiece playerKing = null;
+
+        //function to find king and assign him
+        for (int x = 0; x < 8; x++)
+        {
+            if (playerKing != null) break;
+            for (int y = 0; y < 8; y++)
+            {
+                if (boardLayout.spot[x,y].occupied)
+                {
+                    if (player)
+                    {
+                        if(boardLayout.spot[x,y].pieceonTile.isKing)
+                        {
+                            playerKing = boardLayout.spot[x,y].pieceonTile;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int x = 0; x < 8; x++)
+        {
+            for (int y = 0; y < 8; y++)
+            {
+                if (boardLayout.spot[x, y].occupied)
+                {
+                    if (!player)
+                    {
+                        if (AttackIsValid(boardLayout.spot[x,y].pieceonTile, playerKing))
+                        {
+                            playerKing = boardLayout.spot[x, y].pieceonTile;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+    #endregion 
+
+    #region Checks if Move is Valid
     public bool MoveIsValid (GamePiece piece, int xLoc, int yLoc)
     {
 
@@ -171,8 +218,9 @@ public class BoardManager : MonoBehaviour
         return false;
 
     }
-
-    //logic for checking validity of an attack
+    #endregion
+    
+    #region Checks if an attack is valid
     public bool AttackIsValid(GamePiece pieceToBeMoved, GamePiece pieceOnTile)
     {
         pieceToBeMoved.boxCollider.enabled = false;
@@ -246,8 +294,9 @@ public class BoardManager : MonoBehaviour
         return false;
 
     }
+    #endregion
 
-    //clears spot if filled and moves to
+    #region Move Command
     public void MoveTo(GamePiece pieceToBeMoved, IntVector2 refToMoveTo)
     {
         if (pieceToBeMoved.firstmove) pieceToBeMoved.firstmove = false;
@@ -258,29 +307,29 @@ public class BoardManager : MonoBehaviour
         board.spot[refToMoveTo.x, refToMoveTo.y].SetPiece(pieceToBeMoved);
 
     }
+    #endregion
 
+    #region not yet implemented
     public void ClearBoardofPieces()
     {
 
     }
-
-    public void PlacePiece()
+    public void LoadBoard(BoardGrid boardToBeLoaded)
     {
-
+        board = boardToBeLoaded;
     }
+    #endregion
 
 
 }
 
 
-
-//Object Container for the entire board and it's layout
-//serialized in order to save it's state to a file.
-
+#region Public Main Board Container
 public class BoardGrid {
-
     public BoardTile[,] spot = new BoardTile[8, 8];
+    
 
+    #region Constructor
     public BoardGrid()
     {
         spot = new BoardTile[8,8];
@@ -289,14 +338,14 @@ public class BoardGrid {
         {
             for (int y = 0; y < spot.GetLength(1); y++)
             {
-                IntVector2 gridReference = new IntVector2();
-                gridReference.x = x;
-                gridReference.y = y;
+                IntVector2 gridReference = new IntVector2(x, y);
                 spot[x, y] = new BoardTile(new Vector3(-3.5f+x, -3.5f+y, 0),gridReference);
             }
         }
     }
+    #endregion
 
+    #region Methods
     public bool OnGameBoard(Vector3 reference)
     {
         //checks to make sure it's inside the coordinate system of the board.
@@ -309,41 +358,28 @@ public class BoardGrid {
 
     public IntVector2 GetGridReference(Vector3 rawInput)
     {
-        IntVector2 referenceVector = new IntVector2();
         //casting to int automatically truncates in C#
-        referenceVector.x = (int)(rawInput.x + 4);
-        referenceVector.y = (int)(rawInput.y + 4);
+        IntVector2 referenceVector = new IntVector2((int)(rawInput.x + 4), (int)(rawInput.y + 4));
         return referenceVector;
 
     }
-    
-
-    
-
+    #endregion
 }
+#endregion
 
 //object container for an actual tile piece
-
+#region Containers
 public class BoardTile
 {
     public GamePiece pieceonTile;
     public Vector3 position;
     public bool occupied;
     public IntVector2 gridReference;
-    private float topBoundary;
-    private float bottomBoundary;
-    private float leftBoundary;
-    private float rightBoundary;
-    
 
     //create a new empty board tile
     public BoardTile(Vector3 passed, IntVector2 refNumbers)
     {
         position = passed;
-        topBoundary = position.y + .5f;
-        bottomBoundary = position.y - 5f;
-        leftBoundary = position.x + .5f;
-        rightBoundary = position.x - .5f;
         gridReference = refNumbers;
         occupied = false;
     }
@@ -365,19 +401,6 @@ public class BoardTile
         occupied = false;
     }
 
-    public bool MoveIsValid(GamePiece incomingPiece)
-    {
-        bool validMove = false;
-        if (!occupied)
-        {
-            validMove = true;
-        }
-        else if(pieceonTile.color != incomingPiece.color)
-        {
-            validMove = true;
-        }
-        return validMove;
-    }
 
     public void SetPiece(GamePiece pieceSent)
     {
@@ -392,19 +415,7 @@ public class BoardTile
         pieceonTile = pieceSent;
     }
 
-    public bool CheckIfOnTile(Vector3 reference)
-    {
-        bool onTile = false;
-        if ((reference.y < topBoundary)&&(reference.y> bottomBoundary)
-            &&(reference.x > leftBoundary)&&reference.x < leftBoundary)
-        {
-            onTile = true;
-        }
-        return onTile;
-    }
-
-
-
-
-
+    
 }
+
+#endregion

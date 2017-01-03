@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-    public GamePiece selected = null;
-    public BoardManager boardManager;
-    public bool selectionStatus;
-    public bool turn;
+    private GamePiece selected = null;
+    private BoardManager boardManager;
+    private bool selectionStatus;
+    private bool turn;
 
     private void NextTurn()
     {
@@ -27,13 +27,18 @@ public class GameManager : MonoBehaviour {
         return colorOfPlayer;
     }
 
+    public bool GetTurn()
+    {
+        return turn;
+    }
+
 
     private void Start()
     {
-        
         boardManager = FindObjectOfType<BoardManager>();
-        selectionStatus = false;
+        turn = true;
     }
+    
 
     private void OnGUI()
     {
@@ -42,87 +47,19 @@ public class GameManager : MonoBehaviour {
 
     public void Update()
     {
-        
+    }
 
-        if (!selectionStatus)
+    public bool RequestMove(GamePiece piece, IntVector2 location, bool player)
+    {
+        if (player == turn)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 areaClicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (boardManager.board.OnGameBoard(areaClicked))
-                {
-                    //convert mouse location into game grid location
-                    IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
-                    BoardTile tileHolder = boardManager.board.spot[locationClicked.x,locationClicked.y];  
-                    //if an object at the clicked location exists and is the same color, select the object;
-                    if ((tileHolder.occupied)&&(turn == tileHolder.pieceonTile.color))
-                    {
-                        boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.selected = true;
-                        selected = boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile;
-                        selectionStatus = true;
-                    }
-                }
-            }
+            //if space occupied check attack
+            //execute and return if true
+            return true;
+            //if space not check move
         }
-        else if (selectionStatus)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 areaClicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (areaClicked!=null&&(boardManager.board.OnGameBoard(areaClicked)))
-                {
-                    //convert mouse location into game grid location
-                    IntVector2 locationClicked = boardManager.board.GetGridReference(areaClicked);
 
-                    //temp holder for the tile clicked
-                    BoardTile tileHolder = boardManager.board.spot[locationClicked.x, locationClicked.y];
-                    //if an object at the clicked location exists and is the same color, select the object;
-                    if ((tileHolder.occupied))
-                    {
-                        if (tileHolder.pieceonTile.color == turn)
-                        {
-                            boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile.selected = true;
-                            selected = boardManager.board.spot[locationClicked.x, locationClicked.y].pieceonTile;
-                            selectionStatus = true;
-                        }
-                        //if an enemy was clicked test attack and if possible attack
-                        else if (boardManager.AttackIsValid(selected, tileHolder.pieceonTile))
-                        {
-                            boardManager.MoveTo(selected, locationClicked);
-                            NextTurn();
-                        }
-                    }
-                    //if there was an on grid click without an object present
-
-                    //move to
-                    else if (boardManager.MoveIsValid(selected, locationClicked.x, locationClicked.y))
-                    {
-                        boardManager.MoveTo(selected, locationClicked);
-                        NextTurn();
-                    }
-
-                    //or unselect
-                    else
-                    {
-                        selectionStatus = false;
-                        selected.selected = false;
-                        selected = null;
-                    }
-
-
-
-
-                }
-                //if click is off screen unselect
-                else
-                {
-                    selectionStatus = false;
-                    selected.selected = false;
-                    selected = null;
-                }
-                
-            }
-        }
+        else return false;
     }
   }
     
