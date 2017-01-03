@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Adding comment to test new git ignore.
 //this object is represents the entire board
 public class BoardManager : MonoBehaviour
 {
